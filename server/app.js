@@ -1,5 +1,5 @@
 import express from "express";
-import userRouter from "./routes/user.js";
+import tweetRouter from "./routes/tweets.js";
 
 // import cookieParser from "cookie-parser"; // 쿠키 파싱 툴
 // import morgan from "morgan";  // 모니터링 툴
@@ -32,7 +32,7 @@ app.get("/", (res, req) => {
   console.log("hello world");
   next();
 });
-app.use("/users", userRouter);
+app.use("/tweets", tweetRouter);
 
 app.use((error, req, res, next) => {
   res.status(500).json({ message: "Something went wrong" });
