@@ -1,11 +1,10 @@
 import express from "express";
-import tweetRouter from "./routes/tweets.js";
 
 import cors from "cors"; // 리소스 공유
 import morgan from "morgan"; // 모니터링 툴, 디버깅
 import helmet from "helmet"; // 보안 툴
 import "express-async-errors";
-import router from "./routes/tweets.js";
+import controller from "./controller/tweets.js";
 
 const app = express();
 
@@ -19,7 +18,7 @@ app.get("/", (res, req) => {
   next();
 });
 
-app.use("/tweets", tweetRouter);
+app.use("/tweets", controller);
 
 app.use((req, res, next) => {
   res.sendStatus(404);

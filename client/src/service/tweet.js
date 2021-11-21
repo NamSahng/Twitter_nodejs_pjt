@@ -1,15 +1,21 @@
+// 서버에서 구현한 API를 이용
+// 새로고침하더라도 서버에 데이터가 있어 없어지지 않음
 export default class TweetService {
+  // 외부에서 base URL을 가지고 온다
   constructor(baseURL) {
     this.baseURL = baseURL;
   }
 
   async getTweets(username) {
     let query = username ? `?username=${username}` : "";
+    // 서버에서 url을 통해 response를 받는다
     const response = await fetch(`${this.baseURL}/tweets${query}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
+    // 받으면 json으로 변환
     const data = await response.json();
+    // 응답이 200이 아니면 에러를 던짐
     if (response.status !== 200) {
       throw new Error(data.message);
     }
