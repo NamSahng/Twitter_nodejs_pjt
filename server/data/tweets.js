@@ -19,19 +19,19 @@ let tweets = [
   },
 ];
 
-// Read
-function read_all() {
+export async function getAll() {
   return tweets;
 }
-function read_username(username) {
+
+export async function getAllByUsername(username) {
   return tweets.filter((tweet) => tweet.username === username);
 }
-function read_id(id) {
+
+export async function getById(id) {
   return tweets.find((tweet) => tweet.id === id);
 }
 
-// Create
-function create_tweet(text, name, username) {
+export async function create(text, name, username) {
   const tweet = {
     id: Date.now().toString(),
     text,
@@ -40,34 +40,17 @@ function create_tweet(text, name, username) {
     username,
   };
   tweets = [tweet, ...tweets];
+  return tweet;
 }
 
-// Update
-function update_tweet(id, text) {
+export async function update(id, text) {
   const tweet = tweets.find((tweet) => tweet.id === id);
   if (tweet) {
     tweet.text = text;
-    return true;
-  } else {
-    return false;
   }
+  return tweet;
 }
 
-// Delete
-function delete_tweet(id) {
-  const idx = tweets.findIndex((x) => x.id === id);
-  if (idx !== -1) {
-    tweets.splice(idx, 1);
-    return true;
-  } else {
-    return false;
-  }
+export async function remove(id) {
+  tweets = tweets.filter((tweet) => tweet.id !== id);
 }
-export {
-  read_all,
-  read_username,
-  read_id,
-  create_tweet,
-  update_tweet,
-  delete_tweet,
-};

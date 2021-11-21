@@ -4,7 +4,7 @@ import cors from "cors"; // 리소스 공유
 import morgan from "morgan"; // 모니터링 툴, 디버깅
 import helmet from "helmet"; // 보안 툴
 import "express-async-errors";
-import controller from "./controller/tweets.js";
+import tweetsRouter from "./routes/tweets.js";
 
 const app = express();
 
@@ -18,7 +18,7 @@ app.get("/", (res, req) => {
   next();
 });
 
-app.use("/tweets", controller);
+app.use("/tweets", tweetsRouter);
 
 app.use((req, res, next) => {
   res.sendStatus(404);
