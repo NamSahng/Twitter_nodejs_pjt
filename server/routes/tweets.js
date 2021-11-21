@@ -1,78 +1,85 @@
 import express from "express";
+import "express-async-errors";
 
-const router = express.Router();
-
-let database = [
+// db를 통해 key는 나중에 추가
+// key가 트윗에 대한 id인지, user id 조금 헷갈림
+let tweets = [
   {
-    key: 1,
-    id: 1,
-    text: "Hi",
-    createdAt: "2021-05-09T04:20:57.000Z",
+    id: "1",
+    text: "hello",
+    createdAt: Date.now().toString(),
     name: "Bob",
     username: "bob",
-    url: "https://img.icons8.com/office/80/000000/beyonce.png",
+    url: "https://widgetwhats.com/app/uploads/2019/11/free-profile-photo-whatsapp-1.png",
   },
   {
-    key: 2,
-    id: 2,
-    text: "Bye",
-    createdAt: "2021-05-10T04:20:57.000Z",
-    name: "a",
-    username: "a",
-    url: "https://img.icons8.com/office/80/000000/einstein.png",
-  },
-  {
-    key: 3,
-    id: 2,
-    text: "Thx",
-    createdAt: "2021-05-11T04:20:57.000Z",
-    name: "a",
-    username: "a",
-    url: "https://img.icons8.com/office/80/000000/einstein.png",
+    id: "2",
+    text: "bye!",
+    createdAt: Date.now().toString(),
+    name: "Ellie",
+    username: "ellie",
   },
 ];
+const router = express.Router();
 
-router.get("/", (req, res) => {
+// GET /tweets
+// GET /tweets?username=:username
+router.get("/", (req, res, next) => {
   const username = req.query.username;
-  if (username === undefined) {
-    return res.status(200).send(database);
+  const data = username
+    ? tweets.filter((tweet) => tweet.username === username)
+    : tweets;
+  // username 이 없으면 전체 트윗, 있으면 해당 트윗
+  res.status(200).json(data);
+});
+
+// GET /tweets/:id
+router.get("/:id", (req, res, next) => {
+  const id = req.params.id;
+  const tweet = tweets.find((tweet) => tweet.id === id);
+  if (tweet) {
+    res.status(200).json(tweet);
+  } else {
+    res.status(404).json({ message: `Tweet id(${id}) not found` });
   }
-  res
-    .status(200)
-    .send(database.filter((database) => database.username === username));
 });
 
-router.get("/:id", (req, res) => {
-  res
-    .status(200)
-    .send(database.filter((database) => String(database.id) === req.params.id));
-});
-
-router.post("/", (req, res) => {
+// POST /tweeets
+router.post("/", (req, res, next) => {
+  const { text, name, username } = req.body;
   const tweet = {
-    key: database.slice(-1)[0]["key"] + 1,
-    id: req.body.id,
+    id: Date.now().toString(),
+    text,
     createdAt: new Date(),
-    name: req.body.name,
-    username: req.body.username,
-    text: req.body.text,
+    name,
+    username,
   };
-  database.push(tweet);
-  return res.status(201).send(database);
+  tweets = [tweet, ...tweets]; // 제일 앞에 와야함
+  res.status(201).json(tweet);
 });
 
-router.put("/:id", (req, res) => {
-  const db_idx = database.findIndex((x) => x.key === req.body.key);
-  database[db_idx].text = req.body.text;
-  console.log(database);
-  res.status(200).send(database[db_idx]);
+// PUT /tweets/:id
+router.put("/:id", (req, res, next) => {
+  const id = req.params.id;
+  const text = req.body.text;
+  const tweet = tweets.find((tweet) => tweet.id === id);
+  if (tweet) {
+    tweet.text = text;
+    res.status(200).json(tweet);
+  } else {
+    res.status(404).json({ message: `Tweet id(${id}) not found` });
+  }
 });
 
-router.delete("/:key", (req, res) => {
-  const db_idx = database.findIndex((x) => String(x.key) === req.params.key);
-  database.splice(db_idx, 1);
-  console.log(database);
-  res.status(204).send(database);
+// DELETE /tweets/:id
+router.delete("/:id", (req, res, next) => {
+  const id = req.params.id;
+  tweets = tweets.filter((tweet) => tweet.id !== id);
+  if (tweets.length == 0) {
+    res.sendStatus(204);
+  } else {
+    res.status(404).json({ message: `Tweet id(${id}) not found` });
+  }
 });
 
 export default router;
