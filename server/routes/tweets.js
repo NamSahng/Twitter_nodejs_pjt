@@ -1,19 +1,21 @@
 import express from "express";
 import "express-async-errors";
-import * as tweetController from "../controller/tweets.js";
 import { body, param, validationResult } from "express-validator";
+
+import * as tweetController from "../controller/tweets.js";
+import { validate } from "../middleware/validator.js";
 
 const router = express.Router();
 
-const validate = (req, res, next) => {
-  const errors = validationResult(req);
-  if (errors.isEmpty()) {
-    return next();
-  }
-  return res.status(400).json({ message: errors.array() });
-};
+const validateTweet = [
+  body("text")
+    .trim()
+    .isLength({ min: 3 })
+    .withMessage("text should be at least 3 characters"),
+  validate,
+];
 
-// GET /tweets
+// GET /tweet
 // GET /tweets?username=:username
 router.get("/", tweetController.getTweets);
 
@@ -21,33 +23,12 @@ router.get("/", tweetController.getTweets);
 router.get("/:id", tweetController.getTweet);
 
 // POST /tweeets
-router.post(
-  "/",
-  [
-    body("text").notEmpty().withMessage("Write sth plz!"),
-    body("username").notEmpty().withMessage("No username "),
-    body("name").notEmpty().withMessage("No name"),
-    validate,
-  ],
-  tweetController.createTweet
-);
+router.post("/", validateTweet, tweetController.createTweet);
 
 // PUT /tweets/:id
-router.put(
-  "/:id",
-  [
-    param("id").trim().notEmpty(),
-    body("text").notEmpty().withMessage("Write sth plz!"),
-    validate,
-  ],
-  tweetController.updateTweet
-);
+router.put("/:id", validateTweet, tweetController.updateTweet);
 
 // DELETE /tweets/:id
-router.delete(
-  "/:id",
-  [param("id").trim().notEmpty(), validate],
-  tweetController.deleteTweet
-);
+router.delete("/:id", tweetController.deleteTweet);
 
 export default router;
