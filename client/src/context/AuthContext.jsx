@@ -23,7 +23,7 @@ export function AuthProvider({ authService, authErrorEventBus, children }) {
   useEffect(() => {
     authErrorEventBus.listen((err) => {
       console.log(err);
-      setUser(undefined);
+      setUser(undefined); // user를 undefine으로 설정. 16.11
     });
   }, [authErrorEventBus]);
 
