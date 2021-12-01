@@ -9,6 +9,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { AuthErrorEventBus } from "./context/AuthContext";
 import HttpClient from "./network/http";
 import TokenStorage from "./db/token";
+import socket from "socket.io-client";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 const tokenStorage = new TokenStorage();
@@ -16,6 +17,20 @@ const authErrorEventBus = new AuthErrorEventBus();
 const httpClient = new HttpClient(baseURL, authErrorEventBus);
 const authService = new AuthService(httpClient, tokenStorage);
 const tweetService = new TweetService(httpClient, tokenStorage);
+
+const socketIO = socket(baseURL);
+socketIO.on("coinnect error", (error) => {
+  console.log("socket error", error);
+});
+socketIO.on("new_post", (message) => {
+  console.log(message);
+  // if (message === "new message!") {
+  //   console.log("check if user is in index page");
+  //   console.log("if true refresh page");
+  // }
+  tweetService.getTweets();
+  // socketIO.emit("new_post", "new message!");
+});
 
 ReactDOM.render(
   <React.StrictMode>

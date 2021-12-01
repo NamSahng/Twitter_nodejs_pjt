@@ -1,11 +1,12 @@
 import express from "express";
-
 import cors from "cors"; // 리소스 공유
 import morgan from "morgan"; // 모니터링 툴, 디버깅
 import helmet from "helmet"; // 보안 툴
 import "express-async-errors";
 import tweetsRouter from "./routes/tweets.js";
 import authRouter from "./routes/auth.js";
+import { config } from "./config.js";
+import { Server } from "socket.io";
 
 const app = express();
 
@@ -31,4 +32,9 @@ app.use((error, req, res, next) => {
   res.sendStatus(500);
 });
 
-app.listen(config.host.port);
+const server = app.listen(config.host.port);
+export const socketIO = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
