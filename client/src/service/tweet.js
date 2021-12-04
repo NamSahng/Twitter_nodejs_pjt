@@ -7,9 +7,10 @@
 
 export default class TweetService {
   // 외부에서 base URL을 가지고 온다
-  constructor(http, tokenStorage) {
+  constructor(http, tokenStorage, socket) {
     this.http = http;
     this.tokenStorage = tokenStorage;
+    this.socket = socket;
   }
 
   async getTweets(username) {
@@ -53,5 +54,9 @@ export default class TweetService {
     return {
       Authorization: `Bearer ${token}`,
     };
+  }
+  // 소켓: 아래만 추가됨. 새로운 트윗이 생기면 전달하는 역할
+  onSync(callback) {
+    return this.socket.onSync("tweets", callback);
   }
 }

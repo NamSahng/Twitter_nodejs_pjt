@@ -11,11 +11,15 @@ const Tweets = memo(({ tweetService, username, addable }) => {
   const history = useHistory();
   const { user } = useAuth();
 
+  
   useEffect(() => {
     tweetService
       .getTweets(username)
       .then((tweets) => setTweets([...tweets]))
       .catch(onError);
+    // 소켓: 아래 두 줄 추가
+    const stopSync = tweetService.onSync((tweet) => onCreated(tweet));
+    return () => stopSync();
   }, [tweetService, username, user]);
 
   const onCreated = (tweet) => {
@@ -55,7 +59,8 @@ const Tweets = memo(({ tweetService, username, addable }) => {
         <NewTweetForm
           tweetService={tweetService}
           onError={onError}
-          onCreated={onCreated}
+          // 소켓: 아래 삭제
+          // onCreated={onCreated}
         />
       )}
       {error && <Banner text={error} isAlert={true} transient={true} />}
