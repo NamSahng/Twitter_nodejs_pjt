@@ -20,8 +20,8 @@ export async function getTweet(req, res, next) {
 }
 
 export async function createTweet(req, res, next) {
-  const { text, username, name } = req.body;
-  const tweet = await tweetRepository.create(text, name, username, req.userId);
+  const { text } = req.body;
+  const tweet = await tweetRepository.create(text, req.userId);
   res.status(201).json(tweet);
   getSocketIO().emit("tweets", tweet);
 }
@@ -33,8 +33,8 @@ export async function updateTweet(req, res, next) {
   if (!tweet) {
     return res.status(404).json({ message: `Tweet not found: ${id}` });
   }
+  // 왠지 모르겠지만 objectid가 비교가 안된다
   if (tweet.userId.toString() !== req.userId.toString()) {
-    console.log(tweet.userId, req.userId);
     return res.sendStatus(403);
   }
   const updated = await tweetRepository.update(id, text);
