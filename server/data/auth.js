@@ -1,33 +1,34 @@
-// abcd1234: $2b$12$G9xf8SFq3oTEgdj7ozHQ/uhDOyeQcUEDU8tnOcvpvApuadr3nE5Vm
-let users = [
-  {
-    id: "1",
-    username: "bobbob",
-    password: "$2b$12$G9xf8SFq3oTEgdj7ozHQ/uhDOyeQcUEDU8tnOcvpvApuadr3nE5Vm",
-    name: "Bob",
-    email: "bob@gmail.com",
-    url: "",
-  },
-  {
-    id: "2",
-    username: "ellie",
-    password: "$2b$12$G9xf8SFq3oTEgdj7ozHQ/uhDOyeQcUEDU8tnOcvpvApuadr3nE5Vm",
-    name: "Ellie",
-    email: "ellie@gmail.com",
-    url: "",
-  },
-];
+import { getUsers } from "../db/database.js";
+import MongoDB from "mongodb";
+
+const ObjectId = MongoDB.ObjectId;
 
 export async function findByUsername(username) {
-  return users.find((user) => user.username === username);
+  return getUsers()
+    .findOne({ username })
+    .then((data) => {
+      // const user = { ...data, id: data._id };
+      // console.log(user);
+      return mapOptionalUser(data);
+    });
 }
 
 export async function findById(id) {
-  return users.find((user) => user.id === id);
+  return getUsers()
+    .findOne({ _id: ObjectId(id) })
+    .then(mapOptionalUser);
 }
 
 export async function createUser(user) {
-  const created = { ...user, id: Date.now().toString() };
-  users.push(created);
-  return created.id;
+  return getUsers()
+    .insertOne(user)
+    .then((data) => {
+      // console.log(data.insertedId.toString());
+      return data.insertedId.toString();
+    });
+}
+
+function mapOptionalUser(user) {
+  // user가 null 일 경우 그냥 null 반환
+  return user ? { ...user, id: user._id } : user;
 }
