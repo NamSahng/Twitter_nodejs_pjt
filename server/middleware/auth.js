@@ -20,6 +20,7 @@ export const isAuth = async (req, res, next) => {
       return res.status(401).json(AUTH_ERROR);
     }
     req.userId = user.id; // req.customData
+    req.token = token; // controller/auth.js 51 line 에러 수정
     next();
   });
 };

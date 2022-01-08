@@ -47,5 +47,6 @@ export async function me(req, res, next) {
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
+  // 아래처럼 req.token을 보내주는 req에 token을 저장하지 않음
   res.status(200).json({ token: req.token, username: user.username });
 }

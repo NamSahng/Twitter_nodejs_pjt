@@ -10,9 +10,14 @@ import { initSocket } from "./connection/socket.js";
 import { db } from "./db/database.js";
 const app = express();
 
+const corsOption = {
+  origin: config.cors.allowedOrigin,
+  optionSuccessStatus: 200,
+};
+
 app.use(express.json());
 app.use(helmet());
-app.use(cors());
+app.use(cors(corsOption));
 app.use(morgan("tiny"));
 
 app.get("/", (res, req) => {
@@ -33,6 +38,8 @@ app.use((error, req, res, next) => {
 });
 
 db.getConnection().then();
+//서버가 재시간에 시작했는지 확인하는 부분
+console.log(`Server started ... ${new Date()}`);
 
-const server = app.listen(config.host.port);
+const server = app.listen(config.port);
 initSocket(server);
