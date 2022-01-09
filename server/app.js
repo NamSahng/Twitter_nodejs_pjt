@@ -10,9 +10,14 @@ import { initSocket } from "./connection/socket.js";
 import { sequelize } from "./db/database.js";
 const app = express();
 
+const corsOption = {
+  origin: config.cors.allowedOrigin,
+  optionSuccessStatus: 200,
+};
+
 app.use(express.json());
 app.use(helmet());
-app.use(cors());
+app.use(cors(corsOption));
 app.use(morgan("tiny"));
 
 app.get("/", (res, req) => {
@@ -35,6 +40,7 @@ app.use((error, req, res, next) => {
 ////// 연결확인
 sequelize.sync().then((client) => {
   // console.log(client);
+  console.log(`Server started ... ${new Date()}`);
   const server = app.listen(config.host.port);
   initSocket(server);
 });
