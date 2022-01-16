@@ -1,7 +1,8 @@
 server/node_modules
 server/.env
 server/.env_mongodb
+server/.gitignore
 client/.env
 client/node_modules
-client/.netlify
+client/.netlify/
 .platform
