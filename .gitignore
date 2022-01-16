@@ -1,5 +1,7 @@
 server/node_modules
 server/.env
 server/.env_mongodb
-platform.sh
-platform.sh.pub
+client/.env
+client/node_modules
+client/.netlify
+.platform
