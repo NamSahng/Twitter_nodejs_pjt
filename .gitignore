@@ -1,3 +1,7 @@
-node_modules
-.env
-.env_mongodb
+server/node_modules
+server/.env
+server/.env_mongodb
+client/.env
+client/node_modules
+client/.netlify
+.platform
